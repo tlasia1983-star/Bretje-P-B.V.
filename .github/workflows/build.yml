@@ -28,7 +28,6 @@ jobs:
           mkdir -p app/src/main/java/nl/dakdekker/game
           mkdir -p app/src/main/res/values
           mkdir -p app/src/main/res/drawable-nodpi
-          mkdir -p app/src/main/res/raw
 
           cat > settings.gradle <<'EOF'
           pluginManagement {
@@ -38,6 +37,7 @@ jobs:
                   gradlePluginPortal()
               }
           }
+
           dependencyResolutionManagement {
               repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
               repositories {
@@ -45,6 +45,7 @@ jobs:
                   mavenCentral()
               }
           }
+
           rootProject.name = 'BretjePBV'
           include ':app'
           EOF
@@ -73,8 +74,8 @@ jobs:
                   applicationId 'nl.dakdekker.game'
                   minSdk 23
                   targetSdk 35
-                  versionCode 4
-                  versionName '1.3'
+                  versionCode 5
+                  versionName '1.4'
               }
 
               compileOptions {
@@ -97,22 +98,27 @@ jobs:
 
           cat > app/src/main/AndroidManifest.xml <<'EOF'
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
               <uses-permission android:name="android.permission.VIBRATE" />
+
               <application
                   android:allowBackup="true"
                   android:label="Bretje P B.V."
                   android:icon="@drawable/bretje_icon"
                   android:roundIcon="@drawable/bretje_icon"
                   android:theme="@style/AppTheme">
+
                   <activity
                       android:name=".MainActivity"
                       android:screenOrientation="landscape"
                       android:configChanges="orientation|screenSize|smallestScreenSize"
                       android:exported="true">
+
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN" />
                           <category android:name="android.intent.category.LAUNCHER" />
                       </intent-filter>
+
                   </activity>
               </application>
           </manifest>
@@ -135,69 +141,139 @@ jobs:
           import android.widget.TextView;
 
           public class MainActivity extends Activity implements RooferGameView.GameHost {
+
               private SharedPreferences prefs;
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
+
                   requestWindowFeature(Window.FEATURE_NO_TITLE);
-                  getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                          WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+                  getWindow().setFlags(
+                          WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                          WindowManager.LayoutParams.FLAG_FULLSCREEN
+                  );
+
                   prefs = getSharedPreferences("bretje_p", MODE_PRIVATE);
+
                   showMenu();
+              }
+
+              private int dp(int value) {
+                  return (int) (
+                          value * getResources().getDisplayMetrics().density + 0.5f
+                  );
               }
 
               private TextView title(String text, int size) {
                   TextView v = new TextView(this);
+
                   v.setText(text);
                   v.setTextColor(Color.WHITE);
                   v.setTextSize(size);
                   v.setGravity(Gravity.CENTER);
-                  v.setPadding(dp(12), dp(10), dp(12), dp(10));
+                  v.setPadding(
+                          dp(12),
+                          dp(10),
+                          dp(12),
+                          dp(10)
+                  );
+
                   return v;
               }
 
               private Button menuButton(String text) {
                   Button b = new Button(this);
+
                   b.setText(text);
                   b.setTextSize(18);
                   b.setTextColor(Color.WHITE);
                   b.setAllCaps(false);
                   b.setBackgroundColor(0xDDDF6A00);
-                  LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                          LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                  lp.setMargins(0, dp(6), 0, dp(6));
+
+                  LinearLayout.LayoutParams lp =
+                          new LinearLayout.LayoutParams(
+                                  LinearLayout.LayoutParams.MATCH_PARENT,
+                                  LinearLayout.LayoutParams.WRAP_CONTENT
+                          );
+
+                  lp.setMargins(
+                          0,
+                          dp(6),
+                          0,
+                          dp(6)
+                  );
+
                   b.setLayoutParams(lp);
+
                   return b;
               }
 
-              private int dp(int value) {
-                  return (int)(value * getResources().getDisplayMetrics().density + 0.5f);
-              }
-
               public void showMenu() {
+
                   FrameLayout root = new FrameLayout(this);
-                  root.setBackgroundColor(Color.rgb(18,18,18));
+
+                  root.setBackgroundColor(
+                          Color.rgb(18, 18, 18)
+                  );
 
                   ImageView bg = new ImageView(this);
-                  bg.setImageResource(R.drawable.bretje_menu);
-                  bg.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+                  bg.setImageResource(
+                          R.drawable.bretje_menu
+                  );
+
+                  bg.setScaleType(
+                          ImageView.ScaleType.FIT_CENTER
+                  );
+
                   bg.setAdjustViewBounds(true);
-                  bg.setBackgroundColor(Color.rgb(18,18,18));
-                  root.addView(bg, new FrameLayout.LayoutParams(
-                          FrameLayout.LayoutParams.MATCH_PARENT,
-                          FrameLayout.LayoutParams.MATCH_PARENT));
 
-                  LinearLayout panel = new LinearLayout(this);
-                  panel.setOrientation(LinearLayout.VERTICAL);
-                  panel.setPadding(dp(14), dp(14), dp(14), dp(14));
-                  panel.setBackgroundColor(0xB8000000);
+                  bg.setBackgroundColor(
+                          Color.rgb(18, 18, 18)
+                  );
 
-                  Button play = menuButton("â–¶  SPELEN");
-                  Button jobs = menuButton("ðŸ“‹  OPDRACHTEN");
-                  Button tools = menuButton("ðŸ›   WERKTUIGEN");
-                  Button settings = menuButton("âš™  INSTELLINGEN");
-                  Button scores = menuButton("â˜…  HIGHSCORES");
+                  root.addView(
+                          bg,
+                          new FrameLayout.LayoutParams(
+                                  FrameLayout.LayoutParams.MATCH_PARENT,
+                                  FrameLayout.LayoutParams.MATCH_PARENT
+                          )
+                  );
+
+                  LinearLayout panel =
+                          new LinearLayout(this);
+
+                  panel.setOrientation(
+                          LinearLayout.VERTICAL
+                  );
+
+                  panel.setPadding(
+                          dp(14),
+                          dp(14),
+                          dp(14),
+                          dp(14)
+                  );
+
+                  panel.setBackgroundColor(
+                          0xB8000000
+                  );
+
+                  Button play =
+                          menuButton("SPELEN");
+
+                  Button jobs =
+                          menuButton("OPDRACHTEN");
+
+                  Button tools =
+                          menuButton("WERKTUIGEN");
+
+                  Button settings =
+                          menuButton("INSTELLINGEN");
+
+                  Button scores =
+                          menuButton("HIGHSCORES");
 
                   panel.addView(play);
                   panel.addView(jobs);
@@ -205,106 +281,337 @@ jobs:
                   panel.addView(settings);
                   panel.addView(scores);
 
-                  int width = Math.max(dp(260), (int)(getResources().getDisplayMetrics().widthPixels * 0.30f));
-                  FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(
-                          width, FrameLayout.LayoutParams.WRAP_CONTENT,
-                          Gravity.LEFT | Gravity.CENTER_VERTICAL);
-                  pp.leftMargin = dp(16);
-                  root.addView(panel, pp);
+                  int width = Math.max(
+                          dp(260),
+                          (int) (
+                                  getResources()
+                                          .getDisplayMetrics()
+                                          .widthPixels * 0.30f
+                          )
+                  );
 
-                  play.setOnClickListener(v -> setContentView(new RooferGameView(this, this)));
-                  jobs.setOnClickListener(v -> showInfoScreen("OPDRACHTEN",
-                          "â€¢ Repareer 10 lekkages\n\nâ€¢ Brand 20 naden dicht\n\nâ€¢ Haal 1.500 punten\n\nMeer opdrachten volgen."));
-                  tools.setOnClickListener(v -> showInfoScreen("WERKTUIGEN",
-                          "ðŸ”¥ Dakbrander\n\nðŸ§° Gereedschapskist\n\nðŸ§± Dakrollen\n\nMeer upgrades volgen."));
-                  settings.setOnClickListener(v -> showSettings());
-                  scores.setOnClickListener(v -> showHighscores());
+                  FrameLayout.LayoutParams pp =
+                          new FrameLayout.LayoutParams(
+                                  width,
+                                  FrameLayout.LayoutParams.WRAP_CONTENT,
+                                  Gravity.LEFT |
+                                          Gravity.CENTER_VERTICAL
+                          );
+
+                  pp.leftMargin = dp(16);
+
+                  root.addView(
+                          panel,
+                          pp
+                  );
+
+                  play.setOnClickListener(
+                          v -> setContentView(
+                                  new RooferGameView(
+                                          this,
+                                          this
+                                  )
+                          )
+                  );
+
+                  jobs.setOnClickListener(
+                          v -> showInfoScreen(
+                                  "OPDRACHTEN",
+                                  "Repareer 10 lekkages\n\n" +
+                                          "Brand 20 naden dicht\n\n" +
+                                          "Haal 1.500 punten\n\n" +
+                                          "Meer opdrachten volgen."
+                          )
+                  );
+
+                  tools.setOnClickListener(
+                          v -> showInfoScreen(
+                                  "WERKTUIGEN",
+                                  "Dakbrander\n\n" +
+                                          "Gereedschapskist\n\n" +
+                                          "Dakrollen\n\n" +
+                                          "Brandblusser\n\n" +
+                                          "Meer upgrades volgen."
+                          )
+                  );
+
+                  settings.setOnClickListener(
+                          v -> showSettings()
+                  );
+
+                  scores.setOnClickListener(
+                          v -> showHighscores()
+                  );
 
                   setContentView(root);
               }
 
               private LinearLayout baseScreen() {
-                  LinearLayout box = new LinearLayout(this);
-                  box.setOrientation(LinearLayout.VERTICAL);
-                  box.setPadding(dp(24), dp(18), dp(24), dp(18));
-                  box.setBackgroundColor(Color.rgb(30,30,30));
+
+                  LinearLayout box =
+                          new LinearLayout(this);
+
+                  box.setOrientation(
+                          LinearLayout.VERTICAL
+                  );
+
+                  box.setPadding(
+                          dp(24),
+                          dp(18),
+                          dp(24),
+                          dp(18)
+                  );
+
+                  box.setBackgroundColor(
+                          Color.rgb(30, 30, 30)
+                  );
+
                   return box;
               }
 
-              private void showInfoScreen(String heading, String body) {
-                  LinearLayout box = baseScreen();
-                  box.addView(title(heading, 28));
-                  TextView text = title(body, 18);
-                  text.setGravity(Gravity.LEFT);
-                  LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(
-                          LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
+              private void showInfoScreen(
+                      String heading,
+                      String body
+              ) {
+
+                  LinearLayout box =
+                          baseScreen();
+
+                  box.addView(
+                          title(heading, 28)
+                  );
+
+                  TextView text =
+                          title(body, 18);
+
+                  text.setGravity(
+                          Gravity.LEFT
+                  );
+
+                  LinearLayout.LayoutParams tp =
+                          new LinearLayout.LayoutParams(
+                                  LinearLayout.LayoutParams.MATCH_PARENT,
+                                  0,
+                                  1
+                          );
+
                   text.setLayoutParams(tp);
+
                   box.addView(text);
-                  Button back = menuButton("â† TERUG");
-                  back.setOnClickListener(v -> showMenu());
+
+                  Button back =
+                          menuButton("TERUG");
+
+                  back.setOnClickListener(
+                          v -> showMenu()
+                  );
+
                   box.addView(back);
+
                   setContentView(box);
               }
 
               private void showSettings() {
-                  LinearLayout box = baseScreen();
-                  box.addView(title("INSTELLINGEN", 28));
 
-                  boolean vibration = prefs.getBoolean("vibration", true);
-                  Button vibrate = menuButton("Trillen: " + (vibration ? "AAN" : "UIT"));
-                  vibrate.setOnClickListener(v -> {
-                      boolean next = !prefs.getBoolean("vibration", true);
-                      prefs.edit().putBoolean("vibration", next).apply();
-                      vibrate.setText("Trillen: " + (next ? "AAN" : "UIT"));
-                  });
+                  LinearLayout box =
+                          baseScreen();
+
+                  box.addView(
+                          title(
+                                  "INSTELLINGEN",
+                                  28
+                          )
+                  );
+
+                  boolean vibration =
+                          prefs.getBoolean(
+                                  "vibration",
+                                  true
+                          );
+
+                  Button vibrate =
+                          menuButton(
+                                  "Trillen: " +
+                                          (
+                                                  vibration
+                                                          ? "AAN"
+                                                          : "UIT"
+                                          )
+                          );
+
+                  vibrate.setOnClickListener(
+                          v -> {
+
+                              boolean next =
+                                      !prefs.getBoolean(
+                                              "vibration",
+                                              true
+                                      );
+
+                              prefs.edit()
+                                      .putBoolean(
+                                              "vibration",
+                                              next
+                                      )
+                                      .apply();
+
+                              vibrate.setText(
+                                      "Trillen: " +
+                                              (
+                                                      next
+                                                              ? "AAN"
+                                                              : "UIT"
+                                              )
+                              );
+                          }
+                  );
+
                   box.addView(vibrate);
 
-                  boolean sound = prefs.getBoolean("sound", true);
-                  Button soundBtn = menuButton("Geluid: " + (sound ? "AAN" : "UIT"));
-                  soundBtn.setOnClickListener(v -> {
-                      boolean next = !prefs.getBoolean("sound", true);
-                      prefs.edit().putBoolean("sound", next).apply();
-                      soundBtn.setText("Geluid: " + (next ? "AAN" : "UIT"));
-                  });
+                  boolean sound =
+                          prefs.getBoolean(
+                                  "sound",
+                                  true
+                          );
+
+                  Button soundBtn =
+                          menuButton(
+                                  "Geluid: " +
+                                          (
+                                                  sound
+                                                          ? "AAN"
+                                                          : "UIT"
+                                          )
+                          );
+
+                  soundBtn.setOnClickListener(
+                          v -> {
+
+                              boolean next =
+                                      !prefs.getBoolean(
+                                              "sound",
+                                              true
+                                      );
+
+                              prefs.edit()
+                                      .putBoolean(
+                                              "sound",
+                                              next
+                                      )
+                                      .apply();
+
+                              soundBtn.setText(
+                                      "Geluid: " +
+                                              (
+                                                      next
+                                                              ? "AAN"
+                                                              : "UIT"
+                                              )
+                              );
+                          }
+                  );
+
                   box.addView(soundBtn);
 
-                  Button back = menuButton("â† TERUG");
-                  back.setOnClickListener(v -> showMenu());
+                  Button back =
+                          menuButton("TERUG");
+
+                  back.setOnClickListener(
+                          v -> showMenu()
+                  );
+
                   box.addView(back);
+
                   setContentView(box);
               }
 
               private void showHighscores() {
-                  int high = prefs.getInt("highscore", 0);
-                  int bestFixed = prefs.getInt("best_fixed", 0);
-                  showInfoScreen("HIGHSCORES",
-                          "Beste score: " + high + "\n\n" +
-                          "Meeste lekkages dichtgebrand: " + bestFixed);
+
+                  int high =
+                          prefs.getInt(
+                                  "highscore",
+                                  0
+                          );
+
+                  int bestFixed =
+                          prefs.getInt(
+                                  "best_fixed",
+                                  0
+                          );
+
+                  showInfoScreen(
+                          "HIGHSCORES",
+                          "Beste score: " +
+                                  high +
+                                  "\n\n" +
+                                  "Meeste lekkages dichtgebrand: " +
+                                  bestFixed
+                  );
               }
 
               @Override
-              public void onGameFinished(int score, int fixed) {
-                  int high = prefs.getInt("highscore", 0);
-                  int bestFixed = prefs.getInt("best_fixed", 0);
-                  SharedPreferences.Editor e = prefs.edit();
-                  if (score > high) e.putInt("highscore", score);
-                  if (fixed > bestFixed) e.putInt("best_fixed", fixed);
+              public void onGameFinished(
+                      int score,
+                      int fixed
+              ) {
+
+                  int high =
+                          prefs.getInt(
+                                  "highscore",
+                                  0
+                          );
+
+                  int bestFixed =
+                          prefs.getInt(
+                                  "best_fixed",
+                                  0
+                          );
+
+                  SharedPreferences.Editor e =
+                          prefs.edit();
+
+                  if (score > high) {
+                      e.putInt(
+                              "highscore",
+                              score
+                      );
+                  }
+
+                  if (fixed > bestFixed) {
+                      e.putInt(
+                              "best_fixed",
+                              fixed
+                      );
+                  }
+
                   e.apply();
               }
 
-              @Override public boolean isVibrationEnabled() {
-                  return prefs.getBoolean("vibration", true);
+              @Override
+              public boolean isVibrationEnabled() {
+
+                  return prefs.getBoolean(
+                          "vibration",
+                          true
+                  );
               }
 
-              @Override public boolean isSoundEnabled() {
-                  return prefs.getBoolean("sound", true);
+              @Override
+              public boolean isSoundEnabled() {
+
+                  return prefs.getBoolean(
+                          "sound",
+                          true
+                  );
               }
 
-              @Override public void goToMenu() {
+              @Override
+              public void goToMenu() {
                   showMenu();
               }
 
-              @Override public void onBackPressed() {
+              @Override
+              public void onBackPressed() {
                   showMenu();
               }
           }
@@ -325,476 +632,2104 @@ jobs:
           import android.os.Vibrator;
           import android.view.MotionEvent;
           import android.view.View;
+
           import java.util.ArrayList;
           import java.util.Iterator;
           import java.util.Random;
 
           public class RooferGameView extends View {
+
               public interface GameHost {
-                  void onGameFinished(int score, int fixed);
+
+                  void onGameFinished(
+                          int score,
+                          int fixed
+                  );
+
                   boolean isVibrationEnabled();
+
                   boolean isSoundEnabled();
+
                   void goToMenu();
               }
 
               private final GameHost host;
-              private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-              private final Random random = new Random();
-              private final ArrayList<Leak> leaks = new ArrayList<>();
-              private final ToneGenerator tone = new ToneGenerator(AudioManager.STREAM_MUSIC, 75);
 
-              private float rooferX, rooferY, roofTop;
-              private boolean leftPressed, rightPressed, upPressed, downPressed;
-              private long lastFrame, lastLeakSpawn, startTime;
-              private int score = 0, bonusScore = 0, sealed = 0, missed = 0;
+              private final Paint paint =
+                      new Paint(
+                              Paint.ANTI_ALIAS_FLAG
+                      );
+
+              private final Random random =
+                      new Random();
+
+              private final ArrayList<Leak> leaks =
+                      new ArrayList<>();
+
+              private final ToneGenerator tone =
+                      new ToneGenerator(
+                              AudioManager.STREAM_MUSIC,
+                              75
+                      );
+
+              private float rooferX;
+              private float rooferY;
+              private float roofTop;
+
+              private boolean leftPressed;
+              private boolean rightPressed;
+              private boolean upPressed;
+              private boolean downPressed;
+
+              private long lastFrame;
+              private long lastLeakSpawn;
+              private long startTime;
+
+              private int score = 0;
+              private int bonusScore = 0;
+              private int sealed = 0;
+              private int missed = 0;
 
               private boolean fireActive = false;
-              private float fireX, fireY;
+
+              private float fireX;
+              private float fireY;
+
               private long fireStarted = 0;
               private long nextFireAt = 0;
-              private static final long FIRE_LIFETIME_MS = 9000;
-              private static final int FIRE_BONUS = 500;
+
+              private static final long FIRE_LIFETIME_MS =
+                      9000;
+
+              private static final int FIRE_BONUS =
+                      500;
+
               private String popupText = "";
+
               private long popupUntil = 0;
+
               private boolean gameOver = false;
+
               private boolean scoreSaved = false;
 
-              private final RectF leftBtn = new RectF();
-              private final RectF rightBtn = new RectF();
-              private final RectF upBtn = new RectF();
-              private final RectF downBtn = new RectF();
-              private final RectF burnBtn = new RectF();
-              private final RectF extinguishBtn = new RectF();
-              private final RectF menuBtn = new RectF();
+              private final RectF leftBtn =
+                      new RectF();
 
-              public RooferGameView(Context context, GameHost host) {
+              private final RectF rightBtn =
+                      new RectF();
+
+              private final RectF upBtn =
+                      new RectF();
+
+              private final RectF downBtn =
+                      new RectF();
+
+              private final RectF burnBtn =
+                      new RectF();
+
+              private final RectF extinguishBtn =
+                      new RectF();
+
+              private final RectF menuBtn =
+                      new RectF();
+
+              public RooferGameView(
+                      Context context,
+                      GameHost host
+              ) {
+
                   super(context);
+
                   this.host = host;
-                  setBackgroundColor(Color.rgb(115,190,235));
-                  lastFrame = SystemClock.elapsedRealtime();
-                  startTime = lastFrame;
-                  lastLeakSpawn = lastFrame;
-                  scheduleNextFire(lastFrame);
+
+                  setBackgroundColor(
+                          Color.rgb(
+                                  115,
+                                  190,
+                                  235
+                          )
+                  );
+
+                  lastFrame =
+                          SystemClock.elapsedRealtime();
+
+                  startTime =
+                          lastFrame;
+
+                  lastLeakSpawn =
+                          lastFrame;
+
+                  scheduleNextFire(
+                          lastFrame
+                  );
               }
 
-              @Override protected void onDetachedFromWindow() {
+              @Override
+              protected void onDetachedFromWindow() {
+
                   super.onDetachedFromWindow();
-                  try { tone.release(); } catch (Exception ignored) {}
+
+                  try {
+                      tone.release();
+                  } catch (Exception ignored) {
+                  }
               }
 
-              @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-                  roofTop = h * 0.40f;
-                  rooferX = w * 0.5f;
-                  rooferY = roofTop + h * 0.30f;
+              @Override
+              protected void onSizeChanged(
+                      int w,
+                      int h,
+                      int oldw,
+                      int oldh
+              ) {
 
-                  float d = Math.min(w, h) * 0.115f;
-                  float cx = w * 0.16f;
-                  float cy = h * 0.78f;
+                  roofTop =
+                          h * 0.40f;
 
-                  leftBtn.set(cx-d*1.55f, cy-d*0.5f, cx-d*0.55f, cy+d*0.5f);
-                  rightBtn.set(cx+d*0.55f, cy-d*0.5f, cx+d*1.55f, cy+d*0.5f);
-                  upBtn.set(cx-d*0.5f, cy-d*1.55f, cx+d*0.5f, cy-d*0.55f);
-                  downBtn.set(cx-d*0.5f, cy+d*0.55f, cx+d*0.5f, cy+d*1.55f);
+                  rooferX =
+                          w * 0.5f;
 
-                  burnBtn.set(w*0.72f, h*0.72f, w*0.97f, h*0.82f);
-                  extinguishBtn.set(w*0.72f, h*0.84f, w*0.97f, h*0.94f);
-                  menuBtn.set(w*0.83f, h*0.025f, w*0.98f, h*0.11f);
+                  rooferY =
+                          roofTop +
+                                  h * 0.30f;
+
+                  float d =
+                          Math.min(w, h) *
+                                  0.115f;
+
+                  float cx =
+                          w * 0.16f;
+
+                  float cy =
+                          h * 0.78f;
+
+                  leftBtn.set(
+                          cx - d * 1.55f,
+                          cy - d * 0.5f,
+                          cx - d * 0.55f,
+                          cy + d * 0.5f
+                  );
+
+                  rightBtn.set(
+                          cx + d * 0.55f,
+                          cy - d * 0.5f,
+                          cx + d * 1.55f,
+                          cy + d * 0.5f
+                  );
+
+                  upBtn.set(
+                          cx - d * 0.5f,
+                          cy - d * 1.55f,
+                          cx + d * 0.5f,
+                          cy - d * 0.55f
+                  );
+
+                  downBtn.set(
+                          cx - d * 0.5f,
+                          cy + d * 0.55f,
+                          cx + d * 0.5f,
+                          cy + d * 1.55f
+                  );
+
+                  burnBtn.set(
+                          w * 0.72f,
+                          h * 0.72f,
+                          w * 0.97f,
+                          h * 0.82f
+                  );
+
+                  extinguishBtn.set(
+                          w * 0.72f,
+                          h * 0.84f,
+                          w * 0.97f,
+                          h * 0.94f
+                  );
+
+                  menuBtn.set(
+                          w * 0.83f,
+                          h * 0.025f,
+                          w * 0.98f,
+                          h * 0.11f
+                  );
               }
 
-              @Override protected void onDraw(Canvas c) {
+              @Override
+              protected void onDraw(Canvas c) {
+
                   super.onDraw(c);
-                  long now = SystemClock.elapsedRealtime();
-                  float dt = Math.min(0.05f,(now-lastFrame)/1000f);
+
+                  long now =
+                          SystemClock.elapsedRealtime();
+
+                  float dt =
+                          Math.min(
+                                  0.05f,
+                                  (now - lastFrame) /
+                                          1000f
+                          );
+
                   lastFrame = now;
-                  if (!gameOver) update(now,dt);
-                  drawScene(c,now);
+
+                  if (!gameOver) {
+                      update(
+                              now,
+                              dt
+                      );
+                  }
+
+                  drawScene(
+                          c,
+                          now
+                  );
+
                   postInvalidateOnAnimation();
               }
 
-              private void update(long now, float dt) {
-                  float speed = getWidth()*0.38f;
-                  if (leftPressed) rooferX -= speed*dt;
-                  if (rightPressed) rooferX += speed*dt;
-                  if (upPressed) rooferY -= speed*0.68f*dt;
-                  if (downPressed) rooferY += speed*0.68f*dt;
+              private void update(
+                      long now,
+                      float dt
+              ) {
 
-                  rooferX = clamp(rooferX,getWidth()*0.06f,getWidth()*0.94f);
-                  rooferY = clamp(rooferY,roofTop+getHeight()*0.12f,getHeight()*0.72f);
+                  float speed =
+                          getWidth() *
+                                  0.38f;
 
-                  long elapsed = now-startTime;
-                  long spawnEvery = Math.max(700,1600-elapsed/40);
-                  if (now-lastLeakSpawn > spawnEvery) {
-                      float x = getWidth()*(0.08f+random.nextFloat()*0.84f);
-                      float y = roofTop + getHeight()*(0.08f+random.nextFloat()*0.24f);
-                      leaks.add(new Leak(x,y,now));
-                      lastLeakSpawn = now;
-                      playTone(ToneGenerator.TONE_PROP_BEEP2, 80);
+                  if (leftPressed) {
+                      rooferX -=
+                              speed * dt;
                   }
 
-                  Iterator<Leak> it = leaks.iterator();
-                  while (it.hasNext()) {
-                      Leak l = it.next();
-                      if (now-l.birth > 6500) {
+                  if (rightPressed) {
+                      rooferX +=
+                              speed * dt;
+                  }
+
+                  if (upPressed) {
+                      rooferY -=
+                              speed *
+                                      0.68f *
+                                      dt;
+                  }
+
+                  if (downPressed) {
+                      rooferY +=
+                              speed *
+                                      0.68f *
+                                      dt;
+                  }
+
+                  rooferX =
+                          clamp(
+                                  rooferX,
+                                  getWidth() *
+                                          0.06f,
+                                  getWidth() *
+                                          0.94f
+                          );
+
+                  rooferY =
+                          clamp(
+                                  rooferY,
+                                  roofTop +
+                                          getHeight() *
+                                                  0.12f,
+                                  getHeight() *
+                                          0.72f
+                          );
+
+                  long elapsed =
+                          now -
+                                  startTime;
+
+                  long spawnEvery =
+                          Math.max(
+                                  700,
+                                  1600 -
+                                          elapsed /
+                                                  40
+                          );
+
+                  if (
+                          now -
+                                  lastLeakSpawn >
+                                  spawnEvery
+                  ) {
+
+                      float x =
+                              getWidth() *
+                                      (
+                                              0.08f +
+                                                      random.nextFloat() *
+                                                              0.84f
+                                      );
+
+                      float y =
+                              roofTop +
+                                      getHeight() *
+                                              (
+                                                      0.08f +
+                                                              random.nextFloat() *
+                                                                      0.24f
+                                              );
+
+                      leaks.add(
+                              new Leak(
+                                      x,
+                                      y,
+                                      now
+                              )
+                      );
+
+                      lastLeakSpawn =
+                              now;
+
+                      playTone(
+                              ToneGenerator.TONE_PROP_BEEP2,
+                              80
+                      );
+                  }
+
+                  Iterator<Leak> it =
+                          leaks.iterator();
+
+                  while (
+                          it.hasNext()
+                  ) {
+
+                      Leak l =
+                              it.next();
+
+                      if (
+                              now -
+                                      l.birth >
+                                      6500
+                      ) {
+
                           missed++;
+
                           it.remove();
-                          playTone(ToneGenerator.TONE_SUP_ERROR, 120);
-                          if (missed >= 5) {
-                              gameOver = true;
+
+                          playTone(
+                                  ToneGenerator.TONE_SUP_ERROR,
+                                  120
+                          );
+
+                          if (
+                                  missed >=
+                                          5
+                          ) {
+
+                              gameOver =
+                                      true;
+
                               saveScore();
-                              playTone(ToneGenerator.TONE_SUP_ERROR, 400);
+
+                              playTone(
+                                      ToneGenerator.TONE_SUP_ERROR,
+                                      400
+                              );
                           }
                       }
                   }
 
-                  if (!fireActive && now >= nextFireAt) {
-                      fireActive = true;
-                      fireStarted = now;
-                      fireX = getWidth()*(0.15f + random.nextFloat()*0.70f);
-                      fireY = roofTop + getHeight()*(0.10f + random.nextFloat()*0.20f);
-                      popupText = "BRAND! PAK DE BLUSSER";
-                      popupUntil = now + 1800;
-                      playTone(ToneGenerator.TONE_SUP_ERROR, 220);
+                  if (
+                          !fireActive &&
+                                  now >=
+                                          nextFireAt
+                  ) {
+
+                      fireActive =
+                              true;
+
+                      fireStarted =
+                              now;
+
+                      fireX =
+                              getWidth() *
+                                      (
+                                              0.15f +
+                                                      random.nextFloat() *
+                                                              0.70f
+                                      );
+
+                      fireY =
+                              roofTop +
+                                      getHeight() *
+                                              (
+                                                      0.10f +
+                                                              random.nextFloat() *
+                                                                      0.20f
+                                              );
+
+                      popupText =
+                              "BRAND! PAK DE BLUSSER";
+
+                      popupUntil =
+                              now +
+                                      1800;
+
+                      playTone(
+                              ToneGenerator.TONE_SUP_ERROR,
+                              220
+                      );
                   }
 
-                  if (fireActive && now-fireStarted > FIRE_LIFETIME_MS) {
-                      fireActive = false;
-                      popupText = "BRAND GEMIST";
-                      popupUntil = now + 1200;
-                      scheduleNextFire(now);
+                  if (
+                          fireActive &&
+                                  now -
+                                          fireStarted >
+                                          FIRE_LIFETIME_MS
+                  ) {
+
+                      fireActive =
+                              false;
+
+                      popupText =
+                              "BRAND GEMIST";
+
+                      popupUntil =
+                              now +
+                                      1200;
+
+                      scheduleNextFire(
+                              now
+                      );
                   }
 
-                  score = sealed*100 + (int)((now-startTime)/1000)*2 + bonusScore;
+                  score =
+                          sealed *
+                                  100 +
+                                  (int) (
+                                          (
+                                                  now -
+                                                          startTime
+                                          ) /
+                                                  1000
+                                  ) *
+                                          2 +
+                                  bonusScore;
               }
 
-              private void scheduleNextFire(long now) {
-                  nextFireAt = now + 30000 + random.nextInt(30001);
+              private void scheduleNextFire(
+                      long now
+              ) {
+
+                  nextFireAt =
+                          now +
+                                  30000 +
+                                  random.nextInt(
+                                          30001
+                                  );
               }
 
               private void saveScore() {
+
                   if (!scoreSaved) {
-                      scoreSaved = true;
-                      host.onGameFinished(score, sealed);
+
+                      scoreSaved =
+                              true;
+
+                      host.onGameFinished(
+                              score,
+                              sealed
+                      );
                   }
               }
 
               private void burnNearest() {
+
                   if (gameOver) {
+
                       restart();
-                      playTone(ToneGenerator.TONE_PROP_ACK, 100);
+
+                      playTone(
+                              ToneGenerator.TONE_PROP_ACK,
+                              100
+                      );
+
                       return;
                   }
 
-                  Leak nearest = null;
-                  float best = Float.MAX_VALUE;
-                  for (Leak l : leaks) {
-                      float dx = l.x-rooferX;
-                      float dy = l.y-rooferY;
-                      float d = (float)Math.sqrt(dx*dx + dy*dy);
-                      if (d < best) { best=d; nearest=l; }
+                  Leak nearest =
+                          null;
+
+                  float best =
+                          Float.MAX_VALUE;
+
+                  for (
+                          Leak l :
+                          leaks
+                  ) {
+
+                      float dx =
+                              l.x -
+                                      rooferX;
+
+                      float dy =
+                              l.y -
+                                      rooferY;
+
+                      float d =
+                              (float)
+                                      Math.sqrt(
+                                              dx * dx +
+                                                      dy * dy
+                                      );
+
+                      if (
+                              d <
+                                      best
+                      ) {
+
+                          best = d;
+
+                          nearest = l;
+                      }
                   }
 
-                  if (nearest != null && best < getWidth()*0.12f) {
-                      leaks.remove(nearest);
+                  if (
+                          nearest != null &&
+                                  best <
+                                          getWidth() *
+                                                  0.12f
+                  ) {
+
+                      leaks.remove(
+                              nearest
+                      );
+
                       sealed++;
+
                       vibrate();
-                      playTone(ToneGenerator.TONE_PROP_ACK, 90);
+
+                      playTone(
+                              ToneGenerator.TONE_PROP_ACK,
+                              90
+                      );
+
                   } else {
-                      playTone(ToneGenerator.TONE_PROP_NACK, 60);
+
+                      playTone(
+                              ToneGenerator.TONE_PROP_NACK,
+                              60
+                      );
                   }
               }
 
               private void extinguishFire() {
-                  if (!fireActive || gameOver) {
-                      playTone(ToneGenerator.TONE_PROP_NACK, 60);
+
+                  if (
+                          !fireActive ||
+                                  gameOver
+                  ) {
+
+                      playTone(
+                              ToneGenerator.TONE_PROP_NACK,
+                              60
+                      );
+
                       return;
                   }
-                  float dx = fireX-rooferX;
-                  float dy = fireY-rooferY;
-                  float d = (float)Math.sqrt(dx*dx + dy*dy);
-                  if (d < getWidth()*0.13f) {
-                      fireActive = false;
-                      bonusScore += FIRE_BONUS;
-                      popupText = "BRAND GEBLUST! +"+FIRE_BONUS;
-                      popupUntil = SystemClock.elapsedRealtime() + 1800;
+
+                  float dx =
+                          fireX -
+                                  rooferX;
+
+                  float dy =
+                          fireY -
+                                  rooferY;
+
+                  float d =
+                          (float)
+                                  Math.sqrt(
+                                          dx * dx +
+                                                  dy * dy
+                                  );
+
+                  if (
+                          d <
+                                  getWidth() *
+                                          0.13f
+                  ) {
+
+                      fireActive =
+                              false;
+
+                      bonusScore +=
+                              FIRE_BONUS;
+
+                      popupText =
+                              "BRAND GEBLUST! +" +
+                                      FIRE_BONUS;
+
+                      popupUntil =
+                              SystemClock.elapsedRealtime() +
+                                      1800;
+
                       vibrate();
-                      playTone(ToneGenerator.TONE_PROP_ACK, 180);
-                      scheduleNextFire(SystemClock.elapsedRealtime());
+
+                      playTone(
+                              ToneGenerator.TONE_PROP_ACK,
+                              180
+                      );
+
+                      scheduleNextFire(
+                              SystemClock.elapsedRealtime()
+                      );
+
                   } else {
-                      popupText = "LOOP DICHTER NAAR DE BRAND";
-                      popupUntil = SystemClock.elapsedRealtime() + 900;
-                      playTone(ToneGenerator.TONE_PROP_NACK, 70);
+
+                      popupText =
+                              "LOOP DICHTER NAAR DE BRAND";
+
+                      popupUntil =
+                              SystemClock.elapsedRealtime() +
+                                      900;
+
+                      playTone(
+                              ToneGenerator.TONE_PROP_NACK,
+                              70
+                      );
                   }
               }
 
-              private void playTone(int type, int duration) {
-                  if (!host.isSoundEnabled()) return;
-                  try { tone.startTone(type, duration); } catch (Exception ignored) {}
+              private void playTone(
+                      int type,
+                      int duration
+              ) {
+
+                  if (
+                          !host.isSoundEnabled()
+                  ) {
+                      return;
+                  }
+
+                  try {
+
+                      tone.startTone(
+                              type,
+                              duration
+                      );
+
+                  } catch (
+                          Exception ignored
+                  ) {
+                  }
               }
 
               private void vibrate() {
-                  if (!host.isVibrationEnabled()) return;
+
+                  if (
+                          !host.isVibrationEnabled()
+                  ) {
+                      return;
+                  }
+
                   try {
-                      Vibrator vib = (Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE);
-                      if (vib != null && vib.hasVibrator()) {
-                          if (android.os.Build.VERSION.SDK_INT >= 26)
-                              vib.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-                          else
-                              vib.vibrate(35);
+
+                      Vibrator vib =
+                              (Vibrator)
+                                      getContext()
+                                              .getSystemService(
+                                                      Context.VIBRATOR_SERVICE
+                                              );
+
+                      if (
+                              vib != null &&
+                                      vib.hasVibrator()
+                      ) {
+
+                          if (
+                                  android.os.Build.VERSION.SDK_INT >=
+                                          26
+                          ) {
+
+                              vib.vibrate(
+                                      VibrationEffect.createOneShot(
+                                              35,
+                                              VibrationEffect.DEFAULT_AMPLITUDE
+                                      )
+                              );
+
+                          } else {
+
+                              vib.vibrate(
+                                      35
+                              );
+                          }
                       }
-                  } catch (Exception ignored) {}
+
+                  } catch (
+                          Exception ignored
+                  ) {
+                  }
               }
 
               private void restart() {
+
                   leaks.clear();
-                  score = bonusScore = sealed = missed = 0;
-                  gameOver = false;
-                  scoreSaved = false;
-                  startTime = SystemClock.elapsedRealtime();
-                  lastLeakSpawn = startTime;
-                  fireActive = false;
-                  scheduleNextFire(startTime);
-                  rooferX = getWidth()*0.5f;
-                  rooferY = roofTop + getHeight()*0.30f;
+
+                  score = 0;
+                  bonusScore = 0;
+                  sealed = 0;
+                  missed = 0;
+
+                  gameOver =
+                          false;
+
+                  scoreSaved =
+                          false;
+
+                  startTime =
+                          SystemClock.elapsedRealtime();
+
+                  lastLeakSpawn =
+                          startTime;
+
+                  fireActive =
+                          false;
+
+                  scheduleNextFire(
+                          startTime
+                  );
+
+                  rooferX =
+                          getWidth() *
+                                  0.5f;
+
+                  rooferY =
+                          roofTop +
+                                  getHeight() *
+                                          0.30f;
               }
 
-              private void drawScene(Canvas c, long now) {
-                  int w=getWidth(), h=getHeight();
+              private void drawScene(
+                      Canvas c,
+                      long now
+              ) {
 
-                  // skyline
-                  paint.setColor(Color.rgb(205,220,230));
-                  c.drawRect(0,roofTop-h*0.18f,w,roofTop,paint);
-                  paint.setColor(Color.rgb(90,105,115));
-                  for (int i=0;i<9;i++) {
-                      float bw=w/9f;
-                      float top=roofTop-h*(0.07f+(i%3)*0.045f);
-                      c.drawRect(i*bw,top,i*bw+bw*0.82f,roofTop,paint);
+                  int w =
+                          getWidth();
+
+                  int h =
+                          getHeight();
+
+                  paint.setColor(
+                          Color.rgb(
+                                  205,
+                                  220,
+                                  230
+                          )
+                  );
+
+                  c.drawRect(
+                          0,
+                          roofTop -
+                                  h *
+                                          0.18f,
+                          w,
+                          roofTop,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  90,
+                                  105,
+                                  115
+                          )
+                  );
+
+                  for (
+                          int i = 0;
+                          i < 9;
+                          i++
+                  ) {
+
+                      float bw =
+                              w /
+                                      9f;
+
+                      float top =
+                              roofTop -
+                                      h *
+                                              (
+                                                      0.07f +
+                                                              (
+                                                                      i %
+                                                                              3
+                                                              ) *
+                                                                      0.045f
+                                              );
+
+                      c.drawRect(
+                              i *
+                                      bw,
+                              top,
+                              i *
+                                      bw +
+                                      bw *
+                                              0.82f,
+                              roofTop,
+                              paint
+                      );
                   }
 
-                  // roof background
-                  paint.setColor(Color.rgb(54,54,54));
-                  c.drawRect(0,roofTop,w,h,paint);
+                  paint.setColor(
+                          Color.rgb(
+                                  54,
+                                  54,
+                                  54
+                          )
+                  );
 
-                  // dakbanen in halfsteens verband
-                  drawHalfBondRoof(c, w, h);
+                  c.drawRect(
+                          0,
+                          roofTop,
+                          w,
+                          h,
+                          paint
+                  );
 
-                  for (Leak l: leaks) {
-                      float pulse=1f+0.12f*(float)Math.sin((now-l.birth)/120.0);
-                      paint.setColor(Color.rgb(230,70,45));
-                      c.drawCircle(l.x,l.y,h*0.027f*pulse,paint);
-                      paint.setColor(Color.WHITE);
-                      paint.setTextSize(Math.max(14,h*0.03f));
-                      paint.setTextAlign(Paint.Align.CENTER);
-                      c.drawText("LEK",l.x,l.y-h*0.045f,paint);
+                  drawHalfBondRoof(
+                          c,
+                          w,
+                          h
+                  );
+
+                  for (
+                          Leak l :
+                          leaks
+                  ) {
+
+                      float pulse =
+                              1f +
+                                      0.12f *
+                                              (float)
+                                                      Math.sin(
+                                                              (
+                                                                      now -
+                                                                              l.birth
+                                                              ) /
+                                                                      120.0
+                                                      );
+
+                      paint.setColor(
+                              Color.rgb(
+                                      230,
+                                      70,
+                                      45
+                              )
+                      );
+
+                      c.drawCircle(
+                              l.x,
+                              l.y,
+                              h *
+                                      0.027f *
+                                      pulse,
+                              paint
+                      );
+
+                      paint.setColor(
+                              Color.WHITE
+                      );
+
+                      paint.setTextSize(
+                              Math.max(
+                                      14,
+                                      h *
+                                              0.03f
+                              )
+                      );
+
+                      paint.setTextAlign(
+                              Paint.Align.CENTER
+                      );
+
+                      c.drawText(
+                              "LEK",
+                              l.x,
+                              l.y -
+                                      h *
+                                              0.045f,
+                              paint
+                      );
                   }
 
-                  if (fireActive) drawFire(c, fireX, fireY, h, now);
-
-                  drawBretje(c, rooferX, rooferY, h, fireActive);
-
-                  paint.setTextAlign(Paint.Align.LEFT);
-                  paint.setTextSize(Math.max(16,h*0.036f));
-                  paint.setColor(Color.WHITE);
-                  c.drawText("BRETJE P B.V. â€” VUUR IS MIJN PASSIE",18,h*0.065f,paint);
-                  c.drawText("Score: "+score+"   Bonus: "+bonusScore,18,h*0.12f,paint);
-                  c.drawText("Dichtgebrand: "+sealed,18,h*0.175f,paint);
-                  paint.setColor(missed>=3?Color.RED:Color.WHITE);
-                  c.drawText("Gemist: "+missed+"/5",18,h*0.23f,paint);
-
-                  drawButton(c,leftBtn,"â—€");
-                  drawButton(c,rightBtn,"â–¶");
-                  drawButton(c,upBtn,"â–²");
-                  drawButton(c,downBtn,"â–¼");
-                  drawButton(c,burnBtn,"BRANDEN");
                   if (fireActive) {
-                      drawButton(c,extinguishBtn,"BLUSSEN");
-                  } else {
-                      paint.setColor(0x66111111);
-                      c.drawRoundRect(extinguishBtn,22,22,paint);
-                      paint.setColor(0x99FFFFFF);
-                      paint.setTextAlign(Paint.Align.CENTER);
-                      paint.setTextSize(Math.max(14,extinguishBtn.height()*0.25f));
-                      c.drawText("BLUSSEN",extinguishBtn.centerX(),extinguishBtn.centerY()+7,paint);
-                  }
-                  drawButton(c,menuBtn,"MENU");
 
-                  if (now < popupUntil && !popupText.isEmpty()) {
-                      paint.setTextAlign(Paint.Align.CENTER);
-                      paint.setTextSize(Math.max(20,h*0.050f));
-                      paint.setColor(0xDD000000);
-                      RectF box = new RectF(w*0.25f,h*0.26f,w*0.75f,h*0.36f);
-                      c.drawRoundRect(box,20,20,paint);
-                      paint.setColor(Color.WHITE);
-                      c.drawText(popupText,w*0.5f,h*0.325f,paint);
+                      drawFire(
+                              c,
+                              fireX,
+                              fireY,
+                              h,
+                              now
+                      );
+                  }
+
+                  drawBretje(
+                          c,
+                          rooferX,
+                          rooferY,
+                          h,
+                          fireActive
+                  );
+
+                  paint.setTextAlign(
+                          Paint.Align.LEFT
+                  );
+
+                  paint.setTextSize(
+                          Math.max(
+                                  16,
+                                  h *
+                                          0.036f
+                          )
+                  );
+
+                  paint.setColor(
+                          Color.WHITE
+                  );
+
+                  c.drawText(
+                          "BRETJE P B.V. - VUUR IS MIJN PASSIE",
+                          18,
+                          h *
+                                  0.065f,
+                          paint
+                  );
+
+                  c.drawText(
+                          "Score: " +
+                                  score +
+                                  "   Bonus: " +
+                                  bonusScore,
+                          18,
+                          h *
+                                  0.12f,
+                          paint
+                  );
+
+                  c.drawText(
+                          "Dichtgebrand: " +
+                                  sealed,
+                          18,
+                          h *
+                                  0.175f,
+                          paint
+                  );
+
+                  paint.setColor(
+                          missed >= 3
+                                  ? Color.RED
+                                  : Color.WHITE
+                  );
+
+                  c.drawText(
+                          "Gemist: " +
+                                  missed +
+                                  "/5",
+                          18,
+                          h *
+                                  0.23f,
+                          paint
+                  );
+
+                  drawButton(
+                          c,
+                          leftBtn,
+                          "<"
+                  );
+
+                  drawButton(
+                          c,
+                          rightBtn,
+                          ">"
+                  );
+
+                  drawButton(
+                          c,
+                          upBtn,
+                          "^"
+                  );
+
+                  drawButton(
+                          c,
+                          downBtn,
+                          "v"
+                  );
+
+                  drawButton(
+                          c,
+                          burnBtn,
+                          "BRANDEN"
+                  );
+
+                  if (fireActive) {
+
+                      drawButton(
+                              c,
+                              extinguishBtn,
+                              "BLUSSEN"
+                      );
+
+                  } else {
+
+                      paint.setColor(
+                              0x66111111
+                      );
+
+                      c.drawRoundRect(
+                              extinguishBtn,
+                              22,
+                              22,
+                              paint
+                      );
+
+                      paint.setColor(
+                              0x99FFFFFF
+                      );
+
+                      paint.setTextAlign(
+                              Paint.Align.CENTER
+                      );
+
+                      paint.setTextSize(
+                              Math.max(
+                                      14,
+                                      extinguishBtn.height() *
+                                              0.25f
+                              )
+                      );
+
+                      c.drawText(
+                              "BLUSSEN",
+                              extinguishBtn.centerX(),
+                              extinguishBtn.centerY() +
+                                      7,
+                              paint
+                      );
+                  }
+
+                  drawButton(
+                          c,
+                          menuBtn,
+                          "MENU"
+                  );
+
+                  if (
+                          now <
+                                  popupUntil &&
+                                  !popupText.isEmpty()
+                  ) {
+
+                      paint.setTextAlign(
+                              Paint.Align.CENTER
+                      );
+
+                      paint.setTextSize(
+                              Math.max(
+                                      20,
+                                      h *
+                                              0.050f
+                              )
+                      );
+
+                      paint.setColor(
+                              0xDD000000
+                      );
+
+                      RectF box =
+                              new RectF(
+                                      w *
+                                              0.25f,
+                                      h *
+                                              0.26f,
+                                      w *
+                                              0.75f,
+                                      h *
+                                              0.36f
+                              );
+
+                      c.drawRoundRect(
+                              box,
+                              20,
+                              20,
+                              paint
+                      );
+
+                      paint.setColor(
+                              Color.WHITE
+                      );
+
+                      c.drawText(
+                              popupText,
+                              w *
+                                      0.5f,
+                              h *
+                                      0.325f,
+                              paint
+                      );
                   }
 
                   if (gameOver) {
-                      paint.setColor(0xCC000000);
-                      c.drawRect(0,0,w,h,paint);
-                      paint.setTextAlign(Paint.Align.CENTER);
-                      paint.setColor(Color.WHITE);
-                      paint.setTextSize(h*0.10f);
-                      c.drawText("DAK LEKT!",w/2f,h*0.36f,paint);
-                      paint.setTextSize(h*0.05f);
-                      c.drawText("Eindscore: "+score,w/2f,h*0.49f,paint);
-                      c.drawText("Tik BRANDEN om opnieuw te beginnen",w/2f,h*0.59f,paint);
-                      c.drawText("of MENU om terug te gaan",w/2f,h*0.67f,paint);
+
+                      paint.setColor(
+                              0xCC000000
+                      );
+
+                      c.drawRect(
+                              0,
+                              0,
+                              w,
+                              h,
+                              paint
+                      );
+
+                      paint.setTextAlign(
+                              Paint.Align.CENTER
+                      );
+
+                      paint.setColor(
+                              Color.WHITE
+                      );
+
+                      paint.setTextSize(
+                              h *
+                                      0.10f
+                      );
+
+                      c.drawText(
+                              "DAK LEKT!",
+                              w /
+                                      2f,
+                              h *
+                                      0.36f,
+                              paint
+                      );
+
+                      paint.setTextSize(
+                              h *
+                                      0.05f
+                      );
+
+                      c.drawText(
+                              "Eindscore: " +
+                                      score,
+                              w /
+                                      2f,
+                              h *
+                                      0.49f,
+                              paint
+                      );
+
+                      c.drawText(
+                              "Tik BRANDEN om opnieuw te beginnen",
+                              w /
+                                      2f,
+                              h *
+                                      0.59f,
+                              paint
+                      );
+
+                      c.drawText(
+                              "of MENU om terug te gaan",
+                              w /
+                                      2f,
+                              h *
+                                      0.67f,
+                              paint
+                      );
                   }
               }
 
-              private void drawHalfBondRoof(Canvas c, int w, int h) {
-                  float rowH = Math.max(42f, h*0.085f);
-                  float rollW = Math.max(150f, w*0.23f);
-                  float seam = Math.max(3f, h*0.006f);
+              private void drawHalfBondRoof(
+                      Canvas c,
+                      int w,
+                      int h
+              ) {
+
+                  float rowH =
+                          Math.max(
+                                  42f,
+                                  h *
+                                          0.085f
+                          );
+
+                  float rollW =
+                          Math.max(
+                                  150f,
+                                  w *
+                                          0.23f
+                          );
+
+                  float seam =
+                          Math.max(
+                                  3f,
+                                  h *
+                                          0.006f
+                          );
 
                   int row = 0;
-                  for (float y=roofTop; y<h; y+=rowH, row++) {
-                      float offset = (row % 2 == 0) ? 0 : -rollW/2f;
 
-                      for (float x=offset; x<w; x+=rollW) {
-                          RectF r = new RectF(x, y, x+rollW, Math.min(y+rowH, h));
+                  for (
+                          float y = roofTop;
+                          y < h;
+                          y += rowH,
+                                  row++
+                  ) {
 
-                          paint.setColor((row % 2 == 0)
-                                  ? Color.rgb(58,58,58)
-                                  : Color.rgb(62,62,62));
-                          c.drawRect(r, paint);
+                      float offset =
+                              (
+                                      row %
+                                              2 ==
+                                              0
+                              )
+                                      ? 0
+                                      : -rollW /
+                                              2f;
 
-                          paint.setStyle(Paint.Style.STROKE);
-                          paint.setStrokeWidth(seam);
-                          paint.setColor(Color.rgb(28,28,28));
-                          c.drawRect(r, paint);
-                          paint.setStyle(Paint.Style.FILL);
+                      for (
+                              float x = offset;
+                              x < w;
+                              x += rollW
+                      ) {
 
-                          // lichte lasnaad aan bovenzijde
-                          paint.setColor(Color.rgb(82,82,82));
-                          c.drawRect(r.left, r.top, r.right, Math.min(r.top+seam*0.7f, r.bottom), paint);
+                          RectF r =
+                                  new RectF(
+                                          x,
+                                          y,
+                                          x +
+                                                  rollW,
+                                          Math.min(
+                                                  y +
+                                                          rowH,
+                                                  h
+                                          )
+                                  );
+
+                          paint.setColor(
+                                  (
+                                          row %
+                                                  2 ==
+                                                  0
+                                  )
+                                          ? Color.rgb(
+                                                  58,
+                                                  58,
+                                                  58
+                                          )
+                                          : Color.rgb(
+                                                  62,
+                                                  62,
+                                                  62
+                                          )
+                          );
+
+                          c.drawRect(
+                                  r,
+                                  paint
+                          );
+
+                          paint.setStyle(
+                                  Paint.Style.STROKE
+                          );
+
+                          paint.setStrokeWidth(
+                                  seam
+                          );
+
+                          paint.setColor(
+                                  Color.rgb(
+                                          28,
+                                          28,
+                                          28
+                                  )
+                          );
+
+                          c.drawRect(
+                                  r,
+                                  paint
+                          );
+
+                          paint.setStyle(
+                                  Paint.Style.FILL
+                          );
+
+                          paint.setColor(
+                                  Color.rgb(
+                                          82,
+                                          82,
+                                          82
+                                  )
+                          );
+
+                          c.drawRect(
+                                  r.left,
+                                  r.top,
+                                  r.right,
+                                  Math.min(
+                                          r.top +
+                                                  seam *
+                                                          0.7f,
+                                          r.bottom
+                                  ),
+                                  paint
+                          );
                       }
                   }
               }
 
-              private void drawFire(Canvas c, float x, float y, int h, long now) {
-                  float pulse = 1f + 0.12f*(float)Math.sin(now/90.0);
-                  float r = h*0.035f*pulse;
-                  paint.setColor(Color.rgb(215,45,20));
-                  c.drawCircle(x,y,r*1.15f,paint);
-                  paint.setColor(Color.rgb(255,125,10));
-                  c.drawCircle(x,y-r*0.28f,r*0.80f,paint);
-                  paint.setColor(Color.rgb(255,230,65));
-                  c.drawCircle(x,y-r*0.45f,r*0.42f,paint);
-                  paint.setColor(Color.WHITE);
-                  paint.setTextAlign(Paint.Align.CENTER);
-                  paint.setTextSize(Math.max(16,h*0.030f));
-                  c.drawText("BRAND!",x,y-r*1.65f,paint);
+              private void drawFire(
+                      Canvas c,
+                      float x,
+                      float y,
+                      int h,
+                      long now
+              ) {
+
+                  float pulse =
+                          1f +
+                                  0.12f *
+                                          (float)
+                                                  Math.sin(
+                                                          now /
+                                                                  90.0
+                                                  );
+
+                  float r =
+                          h *
+                                  0.035f *
+                                  pulse;
+
+                  paint.setColor(
+                          Color.rgb(
+                                  215,
+                                  45,
+                                  20
+                          )
+                  );
+
+                  c.drawCircle(
+                          x,
+                          y,
+                          r *
+                                  1.15f,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  255,
+                                  125,
+                                  10
+                          )
+                  );
+
+                  c.drawCircle(
+                          x,
+                          y -
+                                  r *
+                                          0.28f,
+                          r *
+                                  0.80f,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  255,
+                                  230,
+                                  65
+                          )
+                  );
+
+                  c.drawCircle(
+                          x,
+                          y -
+                                  r *
+                                          0.45f,
+                          r *
+                                  0.42f,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.WHITE
+                  );
+
+                  paint.setTextAlign(
+                          Paint.Align.CENTER
+                  );
+
+                  paint.setTextSize(
+                          Math.max(
+                                  16,
+                                  h *
+                                          0.030f
+                          )
+                  );
+
+                  c.drawText(
+                          "BRAND!",
+                          x,
+                          y -
+                                  r *
+                                          1.65f,
+                          paint
+                  );
               }
 
-              private void drawBretje(Canvas c, float x, float y, int h, boolean hasExtinguisher) {
-                  float s = h / 720f;
+              private void drawBretje(
+                      Canvas c,
+                      float x,
+                      float y,
+                      int h,
+                      boolean hasExtinguisher
+              ) {
 
-                  paint.setTextAlign(Paint.Align.CENTER);
-                  paint.setTextSize(Math.max(16,24*s));
-                  paint.setColor(Color.WHITE);
-                  c.drawText("BRETJE P",x,y-112*s,paint);
+                  float s =
+                          h /
+                                  720f;
 
-                  paint.setColor(Color.rgb(225,177,132));
-                  c.drawOval(new RectF(x-24*s,y-88*s,x+24*s,y-42*s),paint);
+                  paint.setTextAlign(
+                          Paint.Align.CENTER
+                  );
 
-                  paint.setColor(Color.rgb(24,24,24));
-                  c.drawArc(new RectF(x-28*s,y-94*s,x+28*s,y-55*s),180,180,true,paint);
-                  c.drawRect(x-31*s,y-73*s,x+31*s,y-67*s,paint);
+                  paint.setTextSize(
+                          Math.max(
+                                  16,
+                                  24 *
+                                          s
+                          )
+                  );
 
-                  paint.setColor(Color.rgb(176,91,44));
-                  c.drawRoundRect(new RectF(x-12*s,y-53*s,x+12*s,y-34*s),7*s,7*s,paint);
+                  paint.setColor(
+                          Color.WHITE
+                  );
 
-                  paint.setColor(Color.rgb(240,240,240));
-                  c.drawRoundRect(new RectF(x-28*s,y-38*s,x+28*s,y+30*s),7*s,7*s,paint);
-                  paint.setColor(Color.rgb(35,35,35));
-                  c.drawRect(x-12*s,y-20*s,x+12*s,y-7*s,paint);
+                  c.drawText(
+                          "BRETJE P",
+                          x,
+                          y -
+                                  112 *
+                                          s,
+                          paint
+                  );
 
-                  paint.setStrokeWidth(Math.max(3,8*s));
-                  paint.setColor(Color.rgb(225,177,132));
-                  c.drawLine(x-25*s,y-20*s,x-44*s,y+7*s,paint);
-                  c.drawLine(x+25*s,y-20*s,x+45*s,y+4*s,paint);
+                  paint.setColor(
+                          Color.rgb(
+                                  225,
+                                  177,
+                                  132
+                          )
+                  );
 
-                  paint.setColor(Color.rgb(40,45,52));
-                  c.drawRect(x-23*s,y+28*s,x-3*s,y+80*s,paint);
-                  c.drawRect(x+3*s,y+28*s,x+23*s,y+80*s,paint);
+                  c.drawOval(
+                          new RectF(
+                                  x -
+                                          24 *
+                                                  s,
+                                  y -
+                                          88 *
+                                                  s,
+                                  x +
+                                          24 *
+                                                  s,
+                                  y -
+                                          42 *
+                                                  s
+                          ),
+                          paint
+                  );
 
-                  paint.setColor(Color.rgb(28,28,28));
-                  paint.setStrokeWidth(Math.max(3,8*s));
-                  c.drawLine(x+43*s,y+3*s,x+78*s,y+25*s,paint);
-                  paint.setColor(Color.rgb(255,145,15));
-                  c.drawCircle(x+86*s,y+31*s,12*s,paint);
-                  paint.setColor(Color.rgb(255,238,120));
-                  c.drawCircle(x+90*s,y+32*s,5*s,paint);
+                  paint.setColor(
+                          Color.rgb(
+                                  24,
+                                  24,
+                                  24
+                          )
+                  );
 
-                  if (hasExtinguisher) {
-                      float bx = x-55*s;
-                      float by = y+14*s;
-                      paint.setColor(Color.rgb(210,30,30));
-                      c.drawRoundRect(new RectF(bx-11*s,by-4*s,bx+11*s,by+35*s),5*s,5*s,paint);
-                      paint.setColor(Color.rgb(30,30,30));
-                      c.drawRect(bx-6*s,by-12*s,bx+6*s,by-3*s,paint);
-                      paint.setStrokeWidth(Math.max(2,4*s));
-                      c.drawLine(x-43*s,y+6*s,bx,by+6*s,paint);
+                  c.drawArc(
+                          new RectF(
+                                  x -
+                                          28 *
+                                                  s,
+                                  y -
+                                          94 *
+                                                  s,
+                                  x +
+                                          28 *
+                                                  s,
+                                  y -
+                                          55 *
+                                                  s
+                          ),
+                          180,
+                          180,
+                          true,
+                          paint
+                  );
+
+                  c.drawRect(
+                          x -
+                                  31 *
+                                          s,
+                          y -
+                                  73 *
+                                          s,
+                          x +
+                                  31 *
+                                          s,
+                          y -
+                                  67 *
+                                          s,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  176,
+                                  91,
+                                  44
+                          )
+                  );
+
+                  c.drawRoundRect(
+                          new RectF(
+                                  x -
+                                          12 *
+                                                  s,
+                                  y -
+                                          53 *
+                                                  s,
+                                  x +
+                                          12 *
+                                                  s,
+                                  y -
+                                          34 *
+                                                  s
+                          ),
+                          7 *
+                                  s,
+                          7 *
+                                  s,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  240,
+                                  240,
+                                  240
+                          )
+                  );
+
+                  c.drawRoundRect(
+                          new RectF(
+                                  x -
+                                          28 *
+                                                  s,
+                                  y -
+                                          38 *
+                                                  s,
+                                  x +
+                                          28 *
+                                                  s,
+                                  y +
+                                          30 *
+                                                  s
+                          ),
+                          7 *
+                                  s,
+                          7 *
+                                  s,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  35,
+                                  35,
+                                  35
+                          )
+                  );
+
+                  c.drawRect(
+                          x -
+                                  12 *
+                                          s,
+                          y -
+                                  20 *
+                                          s,
+                          x +
+                                  12 *
+                                          s,
+                          y -
+                                  7 *
+                                          s,
+                          paint
+                  );
+
+                  paint.setStrokeWidth(
+                          Math.max(
+                                  3,
+                                  8 *
+                                          s
+                          )
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  225,
+                                  177,
+                                  132
+                          )
+                  );
+
+                  c.drawLine(
+                          x -
+                                  25 *
+                                          s,
+                          y -
+                                  20 *
+                                          s,
+                          x -
+                                  44 *
+                                          s,
+                          y +
+                                  7 *
+                                          s,
+                          paint
+                  );
+
+                  c.drawLine(
+                          x +
+                                  25 *
+                                          s,
+                          y -
+                                  20 *
+                                          s,
+                          x +
+                                  45 *
+                                          s,
+                          y +
+                                  4 *
+                                          s,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  40,
+                                  45,
+                                  52
+                          )
+                  );
+
+                  c.drawRect(
+                          x -
+                                  23 *
+                                          s,
+                          y +
+                                  28 *
+                                          s,
+                          x -
+                                  3 *
+                                          s,
+                          y +
+                                  80 *
+                                          s,
+                          paint
+                  );
+
+                  c.drawRect(
+                          x +
+                                  3 *
+                                          s,
+                          y +
+                                  28 *
+                                          s,
+                          x +
+                                  23 *
+                                          s,
+                          y +
+                                  80 *
+                                          s,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  28,
+                                  28,
+                                  28
+                          )
+                  );
+
+                  paint.setStrokeWidth(
+                          Math.max(
+                                  3,
+                                  8 *
+                                          s
+                          )
+                  );
+
+                  c.drawLine(
+                          x +
+                                  43 *
+                                          s,
+                          y +
+                                  3 *
+                                          s,
+                          x +
+                                  78 *
+                                          s,
+                          y +
+                                  25 *
+                                          s,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  255,
+                                  145,
+                                  15
+                          )
+                  );
+
+                  c.drawCircle(
+                          x +
+                                  86 *
+                                          s,
+                          y +
+                                  31 *
+                                          s,
+                          12 *
+                                  s,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.rgb(
+                                  255,
+                                  238,
+                                  120
+                          )
+                  );
+
+                  c.drawCircle(
+                          x +
+                                  90 *
+                                          s,
+                          y +
+                                  32 *
+                                          s,
+                          5 *
+                                  s,
+                          paint
+                  );
+
+                  if (
+                          hasExtinguisher
+                  ) {
+
+                      float bx =
+                              x -
+                                      55 *
+                                              s;
+
+                      float by =
+                              y +
+                                      14 *
+                                              s;
+
+                      paint.setColor(
+                              Color.rgb(
+                                      210,
+                                      30,
+                                      30
+                              )
+                      );
+
+                      c.drawRoundRect(
+                              new RectF(
+                                      bx -
+                                              11 *
+                                                      s,
+                                      by -
+                                              4 *
+                                                      s,
+                                      bx +
+                                              11 *
+                                                      s,
+                                      by +
+                                              35 *
+                                                      s
+                              ),
+                              5 *
+                                      s,
+                              5 *
+                                      s,
+                              paint
+                      );
+
+                      paint.setColor(
+                              Color.rgb(
+                                      30,
+                                      30,
+                                      30
+                              )
+                      );
+
+                      c.drawRect(
+                              bx -
+                                      6 *
+                                              s,
+                              by -
+                                      12 *
+                                              s,
+                              bx +
+                                      6 *
+                                              s,
+                              by -
+                                      3 *
+                                              s,
+                              paint
+                      );
+
+                      paint.setStrokeWidth(
+                              Math.max(
+                                      2,
+                                      4 *
+                                              s
+                              )
+                      );
+
+                      c.drawLine(
+                              x -
+                                      43 *
+                                              s,
+                              y +
+                                      6 *
+                                              s,
+                              bx,
+                              by +
+                                      6 *
+                                              s,
+                              paint
+                      );
                   }
               }
 
-              private void drawButton(Canvas c, RectF r, String text) {
-                  paint.setColor(0xCC111111);
-                  c.drawRoundRect(r,22,22,paint);
-                  paint.setColor(Color.WHITE);
-                  paint.setTextAlign(Paint.Align.CENTER);
-                  paint.setTextSize(Math.max(16,r.height()*0.30f));
-                  c.drawText(text,r.centerX(),r.centerY()+8,paint);
+              private void drawButton(
+                      Canvas c,
+                      RectF r,
+                      String text
+              ) {
+
+                  paint.setColor(
+                          0xCC111111
+                  );
+
+                  c.drawRoundRect(
+                          r,
+                          22,
+                          22,
+                          paint
+                  );
+
+                  paint.setColor(
+                          Color.WHITE
+                  );
+
+                  paint.setTextAlign(
+                          Paint.Align.CENTER
+                  );
+
+                  paint.setTextSize(
+                          Math.max(
+                                  16,
+                                  r.height() *
+                                          0.30f
+                          )
+                  );
+
+                  c.drawText(
+                          text,
+                          r.centerX(),
+                          r.centerY() +
+                                  8,
+                          paint
+                  );
               }
 
-              @Override public boolean onTouchEvent(MotionEvent e) {
-                  float x=e.getX(), y=e.getY();
-                  int action=e.getActionMasked();
+              @Override
+              public boolean onTouchEvent(
+                      MotionEvent e
+              ) {
 
-                  if (action==MotionEvent.ACTION_DOWN || action==MotionEvent.ACTION_POINTER_DOWN) {
-                      if (menuBtn.contains(x,y)) {
+                  float x =
+                          e.getX();
+
+                  float y =
+                          e.getY();
+
+                  int action =
+                          e.getActionMasked();
+
+                  if (
+                          action ==
+                                  MotionEvent.ACTION_DOWN ||
+                                  action ==
+                                          MotionEvent.ACTION_POINTER_DOWN
+                  ) {
+
+                      if (
+                              menuBtn.contains(
+                                      x,
+                                      y
+                              )
+                      ) {
+
                           saveScore();
+
                           host.goToMenu();
+
                           return true;
                       }
-                      updateDirections(x,y);
-                      if (burnBtn.contains(x,y)) burnNearest();
-                      if (extinguishBtn.contains(x,y)) extinguishFire();
-                  } else if (action==MotionEvent.ACTION_MOVE) {
-                      updateDirections(x,y);
-                  } else if (action==MotionEvent.ACTION_UP || action==MotionEvent.ACTION_CANCEL) {
-                      leftPressed=rightPressed=upPressed=downPressed=false;
+
+                      updateDirections(
+                              x,
+                              y
+                      );
+
+                      if (
+                              burnBtn.contains(
+                                      x,
+                                      y
+                              )
+                      ) {
+
+                          burnNearest();
+                      }
+
+                      if (
+                              extinguishBtn.contains(
+                                      x,
+                                      y
+                              )
+                      ) {
+
+                          extinguishFire();
+                      }
+
+                  } else if (
+                          action ==
+                                  MotionEvent.ACTION_MOVE
+                  ) {
+
+                      updateDirections(
+                              x,
+                              y
+                      );
+
+                  } else if (
+                          action ==
+                                  MotionEvent.ACTION_UP ||
+                                  action ==
+                                          MotionEvent.ACTION_CANCEL
+                  ) {
+
+                      leftPressed = false;
+                      rightPressed = false;
+                      upPressed = false;
+                      downPressed = false;
                   }
+
                   return true;
               }
 
-              private void updateDirections(float x, float y) {
-                  leftPressed = leftBtn.contains(x,y);
-                  rightPressed = rightBtn.contains(x,y);
-                  upPressed = upBtn.contains(x,y);
-                  downPressed = downBtn.contains(x,y);
+              private void updateDirections(
+                      float x,
+                      float y
+              ) {
+
+                  leftPressed =
+                          leftBtn.contains(
+                                  x,
+                                  y
+                          );
+
+                  rightPressed =
+                          rightBtn.contains(
+                                  x,
+                                  y
+                          );
+
+                  upPressed =
+                          upBtn.contains(
+                                  x,
+                                  y
+                          );
+
+                  downPressed =
+                          downBtn.contains(
+                                  x,
+                                  y
+                          );
               }
 
-              private float clamp(float v,float min,float max) {
-                  return Math.max(min,Math.min(max,v));
+              private float clamp(
+                      float v,
+                      float min,
+                      float max
+              ) {
+
+                  return Math.max(
+                          min,
+                          Math.min(
+                                  max,
+                                  v
+                          )
+                  );
               }
 
               private static class Leak {
-                  float x,y;
+
+                  float x;
+                  float y;
                   long birth;
-                  Leak(float x,float y,long birth){
-                      this.x=x; this.y=y; this.birth=birth;
+
+                  Leak(
+                          float x,
+                          float y,
+                          long birth
+                  ) {
+
+                      this.x = x;
+                      this.y = y;
+                      this.birth = birth;
                   }
               }
           }
-          EOF          EOF
+          EOF
 
           if [ ! -f bretje_menu.jpg ]; then
             echo "bretje_menu.jpg ontbreekt in de hoofdmap van de repository."
             exit 1
           fi
 
+          if [ ! -f bretje_icon.png ]; then
+            echo "bretje_icon.png ontbreekt in de hoofdmap van de repository."
+            exit 1
+          fi
+
           cp bretje_menu.jpg app/src/main/res/drawable-nodpi/bretje_menu.jpg
+          cp bretje_icon.png app/src/main/res/drawable-nodpi/bretje_icon.png
 
       - name: Build APK
         run: gradle :app:assembleDebug
